@@ -1,5 +1,6 @@
 import React from "react";
 import { useEffect } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import "../../assets/style/userNavbar.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,22 +16,34 @@ import { removeFromBasket } from "../../Config/BasketSlice";
 import NavDropdown from "react-bootstrap/NavDropdown";
 
 function UserNavbar() {
+  let user = JSON.parse(localStorage.getItem("user"));
   const dispatch = useDispatch();
-  let myUser = JSON.parse(localStorage.getItem("user"));
+
   const handleLogOut = () => {
-    window.localStorage.removeItem("user");
+    console.log("salam");
     sessionStorage.setItem("userlogin", JSON.stringify(false));
-    window.location.reload();
+    // window.location.reload();
+
+    // const user = JSON.parse(localStorage.getItem("user"));
+
+    axios.put(`http://localhost:3000/users/${user.id}`, JSON.stringify(user), {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    window.localStorage.removeItem("user");
   };
   const MyBasket = useSelector((state) => state.basket.basket);
 
   let subtotal = 0;
   let count = 0;
 
-  MyBasket.map((x) => {
-    subtotal += x.products.price * x.count;
-    count += x.count;
-  });
+  MyBasket &&
+    MyBasket.map((x) => {
+      subtotal += x.products.price * x.count;
+      count += x.count;
+    });
 
   const MyWishlist = useSelector((state) => state.wishlist.wishlist);
 
@@ -252,8 +265,8 @@ function UserNavbar() {
                 </button>
               </li>
               <li>
-                {myUser ? (
-                  <NavDropdown title={myUser.username} id="basic-nav-dropdown">
+                {user ? (
+                  <NavDropdown title={user.username} id="basic-nav-dropdown">
                     <NavDropdown.Item
                       onClick={handleLogOut}
                       style={{

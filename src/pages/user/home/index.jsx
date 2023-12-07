@@ -5,6 +5,7 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { render } from "react-dom";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faQuoteLeft,
@@ -36,7 +37,11 @@ function Home() {
         <div>
           <h1>EARTH</h1>
           <h4>MULTIPURPOSE STORE</h4>
-          <button>SHOP NOW</button>
+          <button>
+            <Link to="shop" style={{ textDecoration: "none", color: "white" }}>
+              SHOP NOW
+            </Link>
+          </button>
         </div>
       </section>
 
@@ -56,7 +61,8 @@ function Home() {
                       </button>
 
                       <button className="heart">
-                        {MyWishlist.find((wish) => wish.id === x.id) ? (
+                        {MyWishlist &&
+                        MyWishlist.find((wish) => wish.id === x.id) ? (
                           <HeartFilled />
                         ) : (
                           <HeartOutlined />

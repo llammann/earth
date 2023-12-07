@@ -1,167 +1,106 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./../../../assets/style/css/UserProfile.scss";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import {
+  MDBCol,
+  MDBContainer,
+  MDBRow,
+  MDBCard,
+  MDBCardText,
+  MDBCardBody,
+  MDBCardImage,
+  MDBBtn,
+} from "mdb-react-ui-kit";
 
-function UserProfile() {
+export default function ProfilePage() {
+  // useEffect(() => {
+  //   axios.get(http://localhost:3000/users}).then((res) => {
+  //     users = res.data;
+  //   });
+  // }, []);
+  // const userProfile = users.find();
   return (
-    <div>
-      <div class="container" style={{ marginTop: "300px" }}>
-        <div class="row gutters">
-          <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-            <div class="userCard h-100">
-              <div class="card-body">
-                <div class="account-settings">
-                  <div class="user-profile">
-                    <div class="user-avatar">
-                      <img
-                        src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                        alt="Maxwell Admin"
-                      />
-                    </div>
-                    <h5 class="user-name">Yuki Hayashi</h5>
-                    <h6 class="user-email">yuki@Maxwell.com</h6>
-                  </div>
-                  <div class="about">
-                    <h5 class="mb-2 text-primary">About</h5>
-                    <p>
-                      I'm Yuki. Full Stack Designer I enjoy creating
-                      user-centric, delightful and human experiences.
-                    </p>
-                  </div>
+    <section style={{ backgroundColor: "#eee", padding: "150px" }}>
+      <MDBContainer className="py-5">
+        <MDBRow>
+          <MDBCol lg="4">
+            <MDBCard className="mb-4">
+              <MDBCardBody className="text-center">
+                <MDBCardImage
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHhur65zteqNln0VtF8gvGHyvrGV0MeuYGfo2b_0Us6thlH3Uthl9QZJa3Segk7SXO&usqp=CAU"
+                  alt="avatar"
+                  className="rounded-circle"
+                  style={{ width: "150px" }}
+                  fluid
+                />
+                <p className="text-muted mb-1">Full Stack Developer</p>
+                <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
+                <div className="d-flex justify-content-center mb-2">
+                  <MDBBtn style={{ backgroundColor: "green", border: "none" }}>
+                    Follow
+                  </MDBBtn>
+                  <MDBBtn
+                    outline
+                    className="ms-1"
+                    style={{ border: "1px solid green", color: "green" }}
+                  >
+                    Message
+                  </MDBBtn>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
-            <div class="userCard h-100">
-              <div class="card-body">
-                <div class="row gutters">
-                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    <h6 class="mb-3 text-primary">Personal Details</h6>
-                  </div>
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                      <label for="fullName">Full Name</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="fullName"
-                        placeholder="Enter full name"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                      <label for="eMail">Email</label>
-                      <input
-                        type="email"
-                        class="form-control"
-                        id="eMail"
-                        placeholder="Enter email ID"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                      <label for="phone">Phone</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="phone"
-                        placeholder="Enter phone number"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                      <label for="website">Website URL</label>
-                      <input
-                        type="url"
-                        class="form-control"
-                        id="website"
-                        placeholder="Website url"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="row gutters">
-                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    <h6 class="mb-3 text-primary">Address</h6>
-                  </div>
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                      <label for="Street">Street</label>
-                      <input
-                        type="name"
-                        class="form-control"
-                        id="Street"
-                        placeholder="Enter Street"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                      <label for="ciTy">City</label>
-                      <input
-                        type="name"
-                        class="form-control"
-                        id="ciTy"
-                        placeholder="Enter City"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                      <label for="sTate">State</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="sTate"
-                        placeholder="Enter State"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                      <label for="zIp">Zip Code</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="zIp"
-                        placeholder="Zip Code"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="row gutters">
-                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    <div class="text-right">
-                      <button
-                        type="button"
-                        id="submit"
-                        name="submit"
-                        class="btn btn-secondary"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        id="submit"
-                        name="submit"
-                        class="btn btn-primary"
-                      >
-                        Update
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+          <MDBCol lg="8">
+            <MDBCard className="mb-4">
+              <MDBCardBody>
+                <MDBRow>
+                  <MDBCol sm="3">
+                    <MDBCardText>Username</MDBCardText>
+                  </MDBCol>
+                  <MDBCol sm="9">
+                    <MDBCardText className="text-muted">
+                      {/* {element.username} */}
+                    </MDBCardText>
+                  </MDBCol>
+                </MDBRow>
+                <hr />
+                <MDBRow>
+                  <MDBCol sm="3">
+                    <MDBCardText>Email</MDBCardText>
+                  </MDBCol>
+                  <MDBCol sm="9">
+                    <MDBCardText className="text-muted">
+                      {/* {element.email} */}
+                    </MDBCardText>
+                  </MDBCol>
+                </MDBRow>
+                <hr />
+                <MDBRow>
+                  <MDBCol sm="3">
+                    <MDBCardText>Password</MDBCardText>
+                  </MDBCol>
+                  <MDBCol sm="9">
+                    <MDBCardText className="text-muted">
+                      {/* {element.password} */}
+                    </MDBCardText>
+                  </MDBCol>
+                </MDBRow>
+                <hr />
+                <MDBRow>
+                  <MDBCol sm="3">
+                    <MDBCardText>Balance</MDBCardText>
+                  </MDBCol>
+                  <MDBCol sm="9">
+                    <MDBCardText className="text-muted">
+                      {/* {element.balance} */}
+                    </MDBCardText>
+                  </MDBCol>
+                </MDBRow>
+                <hr />
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+        </MDBRow>
+      </MDBContainer>
+    </section>
   );
 }
-export default UserProfile;

@@ -8,22 +8,26 @@ import { ref } from "yup";
 import axios from "axios";
 
 const Login = Yup.object().shape({
-  username: Yup.string().required("Please entered username"),
+  username: Yup.string().required("Please enter your username"),
   password: Yup.string()
-    .required("Please entered the Correct password!")
+    .required("Please enter the correct password!")
     .matches(
-      /^(?=.*[a-z])(?=.*\d).{8,}$/,
-      "Please entered the Correct password!"
+      /^(?=.[a-z])(?=.\d).{8,}$/,
+      "Password must contain at least 8 characters, including one letter and one number"
     ),
   confirm_password: Yup.string()
     .required("Please confirm your password")
-    .oneOf([ref("password")], "Passwords do not match"),
+    .oneOf([Yup.ref("password")], "Passwords do not match"),
+  email: Yup.string()
+    .email("Invalid email")
+    .required("Please enter your email"),
 });
 
 function index() {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [users, setUsers] = useState([]);
+
   useEffect(() => {
     axios.get("http://localhost:3000/users").then((res) => {
       setUsers(res.data);
@@ -45,9 +49,9 @@ function index() {
                   username: "",
                   password: "",
                   confirm_password: "",
+                  email: "",
                   balance: 0,
                 }}
-                // validationSchema={Login}
                 validateOnBlur={false}
                 validateOnChange={false}
                 validationSchema={Login}
@@ -55,12 +59,16 @@ function index() {
                   const sameUser = users.find(
                     (element) => element.username === values.username
                   );
+
                   if (sameUser) {
-                    alert("This username is already have an account");
+                    alert(
+                      "This username is already associated with an account"
+                    );
                   } else {
                     axios.post("http://localhost:3000/users", {
                       username: values.username,
                       password: values.password,
+                      email: values.email,
                       wishlist: [],
                       basket: [],
                       balance: values.balance,
@@ -68,25 +76,6 @@ function index() {
 
                     navigate("/login");
                   }
-
-                  // try {
-                  //   const response = await axios.post("http://localhost:3000/users", {
-                  //     username: values.username,
-                  //     password: values.password,
-                  //     wishlist: [],
-                  //     basket: [],
-                  //     balance: 0,
-                  //   });
-
-                  //   if (response.status === 200 || response.status === 201) {
-                  //     navigate("/login");
-                  //   } else {
-                  //     throw new Error("Registration failed");
-                  //   }
-                  // } catch (error) {
-                  //   setError("Registration failed. Please try again.");
-                  //   console.error("Registration Error:", error);
-                  // }
                 }}
               >
                 {({ errors, touched }) => (
@@ -131,38 +120,40 @@ function index() {
                         <Field className="password" name="password" />
                       </div>
                     </div>
-                    {errors.password && touched.password && (
-                      <div
-                        style={
-                          errors.password &&
-                          touched.password && {
-                            fontSize: "17px",
-                            color: "red",
-                            marginTop: "-20px",
-                          }
-                        }
-                      >
-                        {errors.password}
-                      </div>
-                    )}
+                    {/* Error handling for password */}
+
                     <div className="input">
                       <label>Confirm Password *</label>
                       <Field name="confirm_password" />
                     </div>
-                    {errors.confirm_password && touched.confirm_password && (
-                      <div
+                    {/* Error handling for confirm password */}
+
+                    <div className="input">
+                      <label>Email *</label>
+                      <Field
+                        className="email"
+                        name="email"
                         style={
-                          errors.confirm_password &&
-                          touched.confirm_password && {
-                            fontSize: "17px",
-                            color: "red",
-                            marginTop: "-20px",
-                          }
+                          errors.email &&
+                          touched.email && { borderColor: "red" }
                         }
-                      >
-                        {errors.confirm_password}
-                      </div>
-                    )}
+                      />
+                      {errors.email && touched.email && (
+                        <div
+                          style={
+                            errors.email &&
+                            touched.email && {
+                              fontSize: "17px",
+                              color: "red",
+                              marginTop: "-20px",
+                            }
+                          }
+                        >
+                          {errors.email}
+                        </div>
+                      )}
+                    </div>
+
                     <div className="input">
                       <label>Balance *</label>
                       <div className="input-username">

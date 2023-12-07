@@ -66,7 +66,21 @@ function Index() {
                   );
 
                   if (foundUser) {
-                    localStorage.setItem("user", JSON.stringify(foundUser));
+                    const userData = {
+                      username: foundUser.username,
+                      name: foundUser.name,
+                      surname: foundUser.surname,
+                      email: foundUser.email,
+                      password: foundUser.password,
+                      orders: foundUser.orders,
+                      isAdmin: foundUser.isAdmin,
+                      balance: foundUser.balance,
+                      basket: foundUser.basket,
+                      wishlist: foundUser.wishlist,
+                      id: foundUser.id,
+                    };
+
+                    localStorage.setItem("user", JSON.stringify(userData));
                     sessionStorage.setItem("userlogin", JSON.stringify(true));
                     navigate("/");
                     window.location.reload();

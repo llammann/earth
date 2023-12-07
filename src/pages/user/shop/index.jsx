@@ -1,43 +1,29 @@
 import React, { useEffect, useState } from "react";
 import "../../../assets/style/Shop.scss";
 import Grid from "@mui/material/Grid";
-import { render } from "react-dom";
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
 import axios from "axios";
 import Slider from "@mui/material/Slider";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  faQuoteLeft,
-  faLock,
-  faBox,
-  faHand,
-  faBagShopping,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBagShopping } from "@fortawesome/free-solid-svg-icons";
 import Icon, { SearchOutlined } from "@ant-design/icons";
-{
-  /* <HeartFilled />; */
-}
+import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 
 import { handleBasket } from "../../../Config/BasketSlice";
 import { handleWishlist } from "../../../Config/WishlistSlice";
+
 function Shop() {
   const [products, setProducts] = useState([]);
-  const [priceRange, setPriceRange] = React.useState([10, 30]);
+  const [priceRange, setPriceRange] = useState([10, 30]);
+  const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   const MyBasket = useSelector((state) => state.basket.basket);
   const MyWishlist = useSelector((state) => state.wishlist.wishlist);
-  // console.log(MyBasket);
 
   const handlePriceChange = (event, newValue) => {
     setPriceRange(newValue);
   };
-  useEffect(() => {
-    axios.get("http://localhost:3000/products").then((res) => {
-      setProducts(res.data);
-    });
-  }, []);
 
   const handleBuy = (element) => {
     dispatch(handleBasket(element));
@@ -46,6 +32,25 @@ function Shop() {
   const handleWish = (element) => {
     dispatch(handleWishlist(element));
   };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  useEffect(() => {
+    axios.get("http://localhost:3000/products").then((res) => {
+      const filteredProducts = res.data
+        .filter((product) =>
+          product.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .filter(
+          (product) =>
+            product.price >= priceRange[0] && product.price <= priceRange[1]
+        );
+      setProducts(filteredProducts);
+    });
+  }, [searchTerm, priceRange]);
+
   return (
     <>
       <section className="shop">
@@ -53,7 +58,12 @@ function Shop() {
         <div className="container">
           <div className="left">
             <form action="">
-              <input type="text" placeholder="Search products..." />
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
               <button>
                 <SearchOutlined
                   style={{
@@ -71,14 +81,14 @@ function Shop() {
                 value={priceRange}
                 onChange={handlePriceChange}
                 valueLabelDisplay="auto"
-                valueLabelFormat={(value) => `$${value}`}
+                valueLabelFormat={(value) => ` ${value}`}
                 min={10}
                 max={30}
               />
 
               <div className="minMax">
-                <span>$10</span>
-                <span>$30</span>
+                <span>${priceRange[0]}</span>
+                <span>${priceRange[1]}</span>
               </div>
             </div>
 
@@ -93,6 +103,7 @@ function Shop() {
                 </li>
               </ul>
             </div>
+
             <div className="recentlyViewed">
               <h3>Recently Viewed</h3>
               <div className="viewed">
@@ -135,12 +146,12 @@ function Shop() {
 
               <div className="sorting">
                 <select name="sorting" id="sorting">
-                  <option value="Default">Deafult sorting</option>
+                  <option value="Default">Default sorting</option>
                   <option value="popularity">Sort by popularity</option>
                   <option value="averageRating">Sort by average rating</option>
                   <option value="latest">Sort by latest</option>
-                  <option value="lowToHigh">Sort by price:low to high</option>
-                  <option value="highToLow">Sort by price:high to low</option>
+                  <option value="lowToHigh">Sort by price: low to high</option>
+                  <option value="highToLow">Sort by price: high to low</option>
                 </select>
               </div>
             </div>
@@ -162,8 +173,7 @@ function Shop() {
                             className="heart"
                             onClick={() => handleWish(x)}
                           >
-                            {MyWishlist &&
-                            MyWishlist.find((wish) => wish.id === x.id) ? (
+                            {MyWishlist.find((wish) => wish.id === x.id) ? (
                               <HeartFilled />
                             ) : (
                               <HeartOutlined />

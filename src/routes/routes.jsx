@@ -16,6 +16,7 @@ import Products from "../pages/admin/products";
 import AddProducts from "../pages/admin/addProducts";
 import AdminHome from "../pages/admin/adminHome";
 import AdminLogin from "../pages/admin/adminLogin";
+import AddUsers from "../pages/admin/addUsers";
 export const routes = [
   {
     path: "/",
@@ -95,6 +96,10 @@ export const routes = [
         path: "dashboard",
         element: <Dashboard />,
       },
+      {
+        path: "/admin/addUsers",
+        element: <AddUsers />,
+      },
     ],
   },
-];
+]

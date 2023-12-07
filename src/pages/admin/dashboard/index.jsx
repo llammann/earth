@@ -1,14 +1,9 @@
 import React from "react";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./../../../assets/style/Dashboard.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBagShopping, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { FaShoppingBag } from "react-icons/fa";
-import { MdFavorite } from "react-icons/md";
-import { width } from "@mui/system";
-import { TiDeleteOutline } from "react-icons/ti";
 import NavDropdown from "react-bootstrap/NavDropdown";
 
 function Dashboard() {
@@ -19,20 +14,6 @@ function Dashboard() {
     sessionStorage.setItem("userlogin", JSON.stringify(false));
     window.location.reload();
   };
-  const MyBasket = useSelector((state) => state.basket.basket);
-
-  let subtotal = 0;
-  let count = 0;
-
-  MyBasket.map((x) => {
-    subtotal += x.products.price * x.count;
-    count += x.count;
-  });
-
-  const MyWishlist = useSelector((state) => state.wishlist.wishlist);
-
-  // Calculate the quantity WishList
-  const wishlistQuantity = MyWishlist ? MyWishlist.length : 0;
 
   return (
     <>
@@ -54,6 +35,9 @@ function Dashboard() {
               </li>
               <li>
                 <Link to="/admin/users">Users</Link>
+              </li>
+              <li>
+                <Link to="/admin/addUsers">Add Users</Link>
               </li>
 
               <li>

@@ -11,6 +11,7 @@ import {
   ModalCloseButton,
   Input,
   VStack,
+  HStack,
   Button,
 } from "@chakra-ui/react";
 import {
@@ -28,7 +29,13 @@ function Users() {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [editUserId, setEditUserId] = useState(null);
+  const [editUsername, setEditUsername] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editPassword, setEditPassword] = useState("");
+  const [editBalance, setEditBalance] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState("all");
 
   useEffect(() => {
     fetchData();
@@ -36,9 +43,9 @@ function Users() {
 
   const fetchData = async () => {
     try {
-      const response = await axios("http://localhost:3000/users");
-      setData(response.data);
-      setFilteredData(response.data);
+      const userData = await axios("http://localhost:3000/users");
+      setData(userData.data);
+      setFilteredData(userData.data);
     } catch (error) {
       console.error("Error fetching users: ", error);
     }
@@ -47,48 +54,47 @@ function Users() {
   useEffect(() => {
     const filteredUsers = data.filter((element) => {
       const isMatchingSearchTerm =
-        (element.username &&
-          element.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (element.email &&
-          element.email.toLowerCase().includes(searchTerm.toLowerCase()));
+        element.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        element.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-      return isMatchingSearchTerm;
+      const isMatchingEmail =
+        selectedEmail === "all" || element.email === selectedEmail;
+
+      return isMatchingSearchTerm && isMatchingEmail;
     });
 
     setFilteredData(filteredUsers);
-  }, [searchTerm, data]);
+  }, [searchTerm, selectedEmail, data]);
 
-  const handleEditClick = (
-    userId,
-    userName,
-    userEmail,
-    userPassword,
-    userBalance
-  ) => {
+  const handleCategoryChange = (event) => {
+    setSelectedEmail(event.target.value);
+  };
+
+  const handleEditClick = (userId, username, email, password, balance) => {
     setEditUserId(userId);
-    setEditUserName(userName);
-    setEditUserEmail(userEmail);
-    setEditUserPassword(userPassword);
-    setEditUserBalance(userBalance);
+    setEditUsername(username);
+    setEditEmail(email);
+    setEditPassword(password);
+    setEditBalance(balance);
     setIsEditing(true);
   };
 
   const handleEditClose = () => {
     setEditUserId(null);
-    setEditUserName("");
-    setEditUserEmail("");
-    setEditUserPassword("");
-    setEditUserBalance("");
+    setEditUsername("");
+    setEditEmail("");
+    setEditPassword("");
+    setEditBalance("");
     setIsEditing(false);
   };
 
   const handleSaveEdit = () => {
     axios
       .put(`http://localhost:3000/users/${editUserId}`, {
-        username: editUserName,
-        email: editUserEmail,
-        password: editUserPassword,
-        balance: editUserBalance,
+        username: editUsername,
+        email: editEmail,
+        password: editPassword,
+        balance: editBalance,
       })
       .then(() => {
         fetchData();
@@ -96,17 +102,6 @@ function Users() {
       })
       .catch((error) => {
         console.error("Error editing user: ", error);
-      });
-  };
-
-  const handleDelete = (userId) => {
-    axios
-      .delete(`http://localhost:3000/users/${userId}`)
-      .then(() => {
-        fetchData();
-      })
-      .catch((error) => {
-        console.error("Error deleting user: ", error);
       });
   };
 
@@ -129,6 +124,7 @@ function Users() {
                 <Th>Email</Th>
                 <Th>Password</Th>
                 <Th>Balance</Th>
+                <Th>Edit</Th>
                 <Th>Delete</Th>
               </Tr>
             </Thead>
@@ -142,7 +138,35 @@ function Users() {
                   <Td>{element.balance}</Td>
                   <Td>
                     <Button
-                      onClick={() => handleDelete(element.id)}
+                      colorScheme="cyan"
+                      onClick={() =>
+                        handleEditClick(
+                          element.id,
+                          element.username,
+                          element.email,
+                          element.password,
+                          element.balance
+                        )
+                      }
+                    >
+                      Edit
+                    </Button>
+                  </Td>
+                  <Td>
+                    <Button
+                      onClick={() => {
+                        axios
+                          .delete(`http://localhost:3000/users/${element.id}`)
+                          .then(() => {
+                            let updatedData = data.filter(
+                              (x) => x.id !== element.id
+                            );
+                            setData(updatedData);
+                          })
+                          .catch((error) => {
+                            console.error("Error deleting user: ", error);
+                          });
+                      }}
                       colorScheme="red"
                     >
                       Delete
@@ -156,6 +180,43 @@ function Users() {
       </div>
 
       {/* Edit Modal */}
+      <Modal isOpen={isEditing} onClose={handleEditClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Product</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <Input
+                placeholder="Username"
+                value={editUsername}
+                onChange={(e) => setEditUsername(e.target.value)}
+              />
+              <Input
+                placeholder="Email"
+                value={editEmail}
+                onChange={(e) => setEditEmail(e.target.value)}
+              />
+              <Input
+                placeholder="Password"
+                value={editPassword}
+                onChange={(e) => setEditPassword(e.target.value)}
+              />
+              <Input
+                placeholder="Balance"
+                value={editBalance}
+                onChange={(e) => setEditBalance(e.target.value)}
+              />
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleSaveEdit}>
+              Save
+            </Button>
+            <Button onClick={handleEditClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </ChakraProvider>
   );
 }

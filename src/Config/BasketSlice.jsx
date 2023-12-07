@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+// import axios from "axios";
 
-const User = JSON.parse(localStorage.getItem("user"));
+const user = JSON.parse(localStorage.getItem("user"));
 
 const initialState = {
-  basket: User ? User.basket : [],
+  basket: user ? user.basket : [],
 };
 
 const BasketSlice = createSlice({
@@ -12,33 +12,32 @@ const BasketSlice = createSlice({
   initialState,
   reducers: {
     handleBasket: (state, actions) => {
-      let user = JSON.parse(localStorage.getItem("user"));
+      // let arr = [...user.basket];
+
+      // console.log(actions.payload);
+      // console.log("user", user);
+      // console.log("user basket", user.basket);
+
+      // let user = JSON.parse(localStorage.getItem("user"));
       if (state.basket.some((x) => x.products.id === actions.payload.id)) {
         state.basket.forEach((elem) => {
           if (elem.products.id === actions.payload.id) {
             elem.count += 1;
+            // console.log(arr.elem)
+            // let quantity = elem.basket;
+            // quantity=quantity+1
+            // arr.push({ count: quantity, products: actions.payload });
           }
         });
       } else {
         state.basket.push({ count: 1, products: actions.payload });
       }
-      let myUser = {
-        username: user.username,
-        password: user.password,
-        basket: state.basket,
-        wishlist: state.basket,
-        id: user.id,
-      };
 
-      localStorage.setItem("user", JSON.stringify(myUser));
-      axios.put(
-        `http://localhost:3000/users/${user.id}`,
-        JSON.stringify(myUser),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      // user.basket = arr;
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...user, basket: state.basket })
       );
     },
 
@@ -58,7 +57,10 @@ const BasketSlice = createSlice({
         );
       }
 
-      localStorage.setItem("basket", JSON.stringify(state.basket));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...user, basket: state.basket })
+      );
     },
 
     handlePlus: (state, actions) => {
@@ -72,7 +74,10 @@ const BasketSlice = createSlice({
         existingItem.count += 1;
       }
       console.log(state.basket);
-      localStorage.setItem("basket", JSON.stringify(state.basket));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...user, basket: state.basket })
+      );
     },
 
     removeFromBasket: (state, actions) => {
@@ -86,7 +91,10 @@ const BasketSlice = createSlice({
         (item) => item.products.id !== productIdToRemove
       );
       console.log("after remove", state.basket);
-      localStorage.setItem("basket", JSON.stringify(state.basket));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...user, basket: state.basket })
+      );
     },
 
     // updateBasket: (state, actions) => {
